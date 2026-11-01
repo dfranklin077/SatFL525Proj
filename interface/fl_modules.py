@@ -6,8 +6,9 @@ this one import, which replaces `from interface.learn import render_learn`:
     from interface.fl_modules import render_learn_hub as render_learn_page
 render_modules() is the module picker on its own.
 
-Each lesson is one self-contained HTML document in interface/module_html/, shown
-with streamlit.components.v1.html, so it needs no extra package and no data file.
+Each lesson is one self-contained HTML document, kept in module1.py to module4.py
+next to this file, and shown with streamlit.components.v1.html, so it needs no extra
+package and no data file.
 
 Two small things are added to every lesson when it is shown:
   * the lesson is forced to its light theme, because this app is light-themed
@@ -21,7 +22,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from interface.learn import render_learn as render_concept_lessons
-from interface.module_html import module1, module2, module3, module4
+from interface import module1, module2, module3, module4
 
 MODULES = {
     "Module 1 · FL basics": module1.HTML,
