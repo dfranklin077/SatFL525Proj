@@ -24,7 +24,9 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from backend.fl_simulator import CLASS_NAMES, make_preview_partition, run_demo_experiment
-from interface.learn import render_learn as render_learn_page, render_knowledge_check_page
+#from interface.learn import render_learn as render_learn_page, render_knowledge_check_page
+from interface.learn import render_knowledge_check_page
+from interface.fl_modules import render_learn_hub as render_learn_page
 from interface.measured_studies import render_measured_studies
 
 st.set_page_config(
