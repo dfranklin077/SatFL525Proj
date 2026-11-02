@@ -96,38 +96,18 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
 <h2>Start here: what federated learning is and why it exists</h2>
 <p style="margin:0 0 8px;font-size:15px"><b>Federated learning (FL)</b> trains one shared machine-learning model on data that is spread over many places, without gathering that data in one place. Each place is a <b>client</b>: a phone, a hospital or, here, a satellite. A client trains the model on its own data and sends back only what it learned, the model’s <b>weights</b> (the adjustable numbers inside it). A <b>server</b> combines the clients’ weights into one improved <b>global model</b>, by averaging them in proportion to how much data each client holds (federated averaging, or <b>FedAvg</b>), and sends it out for the next round. The raw data never leaves the client.</p>
 
-<h2 style="margin-top:16px">First, how machine learning usually works</h2>
-<div class="loop l3">
-<div><b>A model</b>A function with adjustable numbers called weights. A neural network is the best-known kind. The demo in section 5 uses a tiny one: a straight-line classifier, which sorts points into two classes with a line, and has three weights.</div>
-<div><b>Data</b>The examples the model learns from: labeled images, audio clips, sensor readings. For a satellite, a picture and what it shows.</div>
-<div><b>Training</b>Adjusting the weights over many passes through the data until the model does a useful task well, such as spotting objects in images, transcribing speech or playing the board game Go. Using the finished model afterwards (inference) is one pass, and the weights stay fixed.</div>
-</div>
-
-<h2 style="margin-top:16px">Where the data is, and what machine learning has usually done about it</h2>
-<p class="cap" style="margin:0 0 8px">Data is born on devices: a phone running an app, a car collecting sensor readings, a laptop keyboard, a smart speaker, a satellite camera. It is also born in many places at once: many devices running the same app, or several organizations producing data for the same task. The usual answer has been to copy all of it to one central server, in a data center or the cloud, and train there.</p>
-<p class="cap" style="margin:0 0 8px">That works when the data already sits on a server, such as holiday photos or web-traffic analytics. It breaks down in healthcare, cars, finance and secure messaging, where the data cannot be moved, or where the data one holder has is not enough to train a good model. Three obstacles keep coming back: laws that restrict moving data, people’s expectation that some data never leaves their device, and sensors that produce more data than anyone can ship or store (section 3 takes them one at a time). A satellite constellation meets the third head-on: a camera can make more imagery than the radio link to the ground can carry, and Module 2 puts numbers on that.</p>
-
-<h2 style="margin-top:16px">What federated learning changes, and when it fits</h2>
-<p class="cap" style="margin:0 0 8px">FL reverses the direction of travel: the server sends the model to the data instead of collecting the data. It was invented for cases like the phone keyboard, where typed text should never leave the phone. Section 2 walks through the loop. It fits best when three things hold:</p>
-<div class="loop l3">
-<div><b>Local data matters</b>The data on the device is more useful than any stand-in a server could hold. A satellite’s own images are the obvious example.</div>
-<div><b>Privacy or size is a concern</b>The data is sensitive, or too large to move. Satellite imagery is large, and can be sensitive.</div>
-<div><b>Labels are available</b>The client can tell what the right answer is. A keyboard learns it from what you type next. For a satellite image the label has to come from somewhere, which is a design question. The demos here sidestep it by giving every satellite labeled data.</div>
-</div>
-
-<h2 style="margin-top:16px">The catch: the clients’ data is rarely alike</h2>
-<p class="cap" style="margin:0 0 8px">Keeping raw data on the device is FL’s main privacy benefit, but the weights that come back are computed from that data and can still leak information (section 7). The second catch is statistical. In ordinary training the data is shuffled, so every batch (a small group of examples used for one training step) looks like a random sample of the whole: the data is <b>independent and identically distributed (IID)</b>. Federated clients are rarely like that. A hospital’s records reflect its region, a phone’s data reflects one person’s habits, and a satellite sees only the stretch of Earth under its orbit. Data that differs from client to client in this way is <b>non-IID</b>, and it is one of the main reasons federated training is harder than the usual kind. Here is what it does:</p>
-<div class="loop l3">
-<div><b>Updates disagree</b>Each client trains on its own skewed slice, so its update is biased toward what that client sees. Averaging updates that pull in different directions makes the global model zigzag instead of improving steadily.</div>
-<div><b>Models drift</b>Each local model moves away from the global model and from the other clients’ models, and the more local training it does, the further it goes. This is called client drift.</div>
-<div><b>Accuracy suffers</b>Even when training settles, the result is a compromise that is not best for any single client, and it is often less accurate than a model trained on pooled data (everyone’s data combined in one place).</div>
-</div>
-<p class="cap" style="margin:10px 0 0">Fixes exist, and each trades something away: more communication, more computation, or a little shared data. FedProx adds a penalty that keeps each client’s local model close to the global one. Other fixes pick or group clients so that each round is more representative, give every client a small shared public data set to train on as well, or have clients share what their models predict (knowledge distillation) instead of raw data. This module keeps the data IID on purpose, so the mechanics of a round stay clear. Module 3 makes it non-IID, shows the damage, and goes through the fixes.</p>
 <p class="cap" style="margin:8px 0 0">How the module follows this story: sections 1 to 4 show why the data stays put and who takes part, section 5 lets you run rounds yourself, and sections 6 to 8 cover the controls, the privacy leaks and the traffic bill.</p>
 </section>
 
 <section class="box sec" id="s1">
 <h2>1 The data problem: what one dataset cannot see</h2>
+<h2 style="margin-top:0">First, how machine learning usually works</h2>
+<div class="loop l3">
+<div><b>A model</b>A function with adjustable numbers called weights. A neural network is the best-known kind. The demo in section 5 uses a tiny one: a straight-line classifier, which sorts points into two classes with a line, and has three weights.</div>
+<div><b>Data</b>The examples the model learns from: labeled images, audio clips, sensor readings. For a satellite, a picture and what it shows.</div>
+<div><b>Training</b>Adjusting the weights over many passes through the data until the model does a useful task well, such as spotting objects in images, transcribing speech or playing the board game Go. Using the finished model afterwards (inference) is one pass, and the weights stay fixed.</div>
+</div>
+<h2 style="margin-top:16px">A model can only learn what its data contains</h2>
 <p class="cap" style="margin:0 0 8px">More and more varied data makes better models. Llama 3, a family of large language models from Meta, trained on about 15 trillion tokens (a token is a word or a piece of a word) against about 2 trillion for Llama 2, and the 8B version of Llama 3 (8 billion weights) beat the 70B version of Llama 2 (70 billion weights). Yet all the high-quality public English text there is comes to roughly 15 trillion tokens, while privately stored instant messages alone are estimated at about 650 trillion and stored emails at about 1,200 trillion. All of these are estimates, quoted only to compare scale.</p>
 <p class="cap est" style="margin:2px 0 8px;font-style:italic">Not exact: shown to illustrate a trend.</p>
 <p class="cap" style="margin:0">A classic test uses handwritten digits from MNIST (the Modified National Institute of Standards and Technology database, a standard set of 70,000 digit images). Three clients each hold part of the data, with three digits missing from each. Red, struck-through digits are missing.</p>
@@ -187,11 +167,20 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
 <p class="cap"><b>The clients are not in lockstep with each other either.</b> They train for different lengths of time and finish at different moments, so a round lasts as long as the slowest client the server is willing to wait for. For very large populations, a round can start with extra clients and close once enough have reported, which drops the stragglers, the slowest clients.</p>
 <p class="cap"><b>Satellites make the waiting much worse.</b> A satellite can only talk during a ground-contact window. In one worked example, one satellite with a late contact holds the first global FedAvg iteration back by more than nine hours. One remedy is <i>asynchronous</i> FL, such as FedAsync (a general-purpose asynchronous method) and FedSat (an asynchronous version of FedAvg designed for satellites): the server updates the global model whenever any update arrives, and satellites keep computing while offline. The price is stale updates and slower convergence. Another route: a satellite trains on the parts of the model it has already received while the remaining parts are still arriving. Modules 4 and 5 return to both ideas.</p>
 <p class="cap" style="margin-top:10px">Cross-silo FL (the clients are organizations or data centers) has a few clients that are available every round; cross-device FL (the clients are phones and other small devices) has many clients that come and go. A satellite constellation sits in between: few clients, but each one is only reachable during a ground-contact window. By default the demo in section 5 selects every satellite every round; its Clients per round slider changes that, and Module 4 adds realistic contact windows.</p>
+<h2 style="margin-top:16px">What federated learning changes, and when it fits</h2>
+<p class="cap" style="margin:0 0 8px">FL reverses the direction of travel: the server sends the model to the data instead of collecting the data. It was invented for cases like the phone keyboard, where typed text should never leave the phone. The loop above walks through it. It fits best when three things hold:</p>
+<div class="loop l3">
+<div><b>Local data matters</b>The data on the device is more useful than any stand-in a server could hold. A satellite’s own images are the obvious example.</div>
+<div><b>Privacy or size is a concern</b>The data is sensitive, or too large to move. Satellite imagery is large, and can be sensitive.</div>
+<div><b>Labels are available</b>The client can tell what the right answer is. A keyboard learns it from what you type next. For a satellite image the label has to come from somewhere, which is a design question. The demos here sidestep it by giving every satellite labeled data.</div>
+</div>
 </section>
 
 <section class="box sec" id="s3">
 <h2>3 The case against collecting the data</h2>
-<p class="cap" style="margin:0 0 4px">Classic machine learning gathers everything on one server. That works for holiday photos or web analytics, but breaks down for three reasons.</p>
+<h2 style="margin-top:0">Where the data is, and what machine learning has usually done about it</h2>
+<p class="cap" style="margin:0 0 8px">Data is born on devices: a phone running an app, a car collecting sensor readings, a laptop keyboard, a smart speaker, a satellite camera. It is also born in many places at once: many devices running the same app, or several organizations producing data for the same task. The usual answer has been to copy all of it to one central server, in a data center or the cloud, and train there.</p>
+<p class="cap" style="margin:0 0 8px">That works when the data already sits on a server, such as holiday photos or web-traffic analytics. It breaks down in healthcare, cars, finance and secure messaging, where the data cannot be moved, or where the data one holder has is not enough to train a good model. Three obstacles keep coming back: laws that restrict moving data, people’s expectation that some data never leaves their device, and sensors that produce more data than anyone can ship or store (taken one at a time below). A satellite constellation meets the third head-on: a camera can make more imagery than the radio link to the ground can carry, and Module 2 puts numbers on that.</p>
 <div class="loop l3">
 <div><b>Regulation</b>Laws such as the European Union’s General Data Protection Regulation (GDPR) and California’s Consumer Privacy Act (CCPA) restrict moving data, and can even stop one organization from pooling its own users’ data across regions.</div>
 <div><b>User expectation</b>People expect sensitive input, like passwords typed on a keyboard, to stay on their device. That use case is why FL was invented.</div>
@@ -212,6 +201,14 @@ p_k    = how much client k counts (in the demo, n_k / n)</div>
 <div><b>Systems heterogeneity</b>Different hardware, connectivity and power. See Module 6.</div>
 <div><b>Privacy and security</b>Updates can still leak information, so extra protection may be needed. See section 7.</div>
 </div>
+<h2 style="margin-top:16px">The catch: the clients’ data is rarely alike</h2>
+<p class="cap" style="margin:0 0 8px">Keeping raw data on the device is FL’s main privacy benefit, but the weights that come back are computed from that data and can still leak information (section 7). The second catch is statistical. In ordinary training the data is shuffled, so every batch (a small group of examples used for one training step) looks like a random sample of the whole: the data is <b>independent and identically distributed (IID)</b>. Federated clients are rarely like that. A hospital’s records reflect its region, a phone’s data reflects one person’s habits, and a satellite sees only the stretch of Earth under its orbit. Data that differs from client to client in this way is <b>non-IID</b>, and it is one of the main reasons federated training is harder than the usual kind. Here is what it does:</p>
+<div class="loop l3">
+<div><b>Updates disagree</b>Each client trains on its own skewed slice, so its update is biased toward what that client sees. Averaging updates that pull in different directions makes the global model zigzag instead of improving steadily.</div>
+<div><b>Models drift</b>Each local model moves away from the global model and from the other clients’ models, and the more local training it does, the further it goes. This is called client drift.</div>
+<div><b>Accuracy suffers</b>Even when training settles, the result is a compromise that is not best for any single client, and it is often less accurate than a model trained on pooled data (everyone’s data combined in one place).</div>
+</div>
+<p class="cap" style="margin:10px 0 0">Fixes exist, and each trades something away: more communication, more computation, or a little shared data. FedProx adds a penalty that keeps each client’s local model close to the global one. Other fixes pick or group clients so that each round is more representative, give every client a small shared public data set to train on as well, or have clients share what their models predict (knowledge distillation) instead of raw data. This module keeps the data IID on purpose, so the mechanics of a round stay clear. Module 3 makes it non-IID, shows the damage, and goes through the fixes.</p>
 </section>
 
 <section class="box sec" id="s4">
