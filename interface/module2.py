@@ -469,7 +469,7 @@ var $=function(i){return document.getElementById(i)};
 function g(i){return +$(i).value}
 function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
 function fmtT(s){return s<90?s.toFixed(1)+' s':s<5400?(s/60).toFixed(1)+' min':s<172800?(s/3600).toFixed(1)+' h':(s/86400).toFixed(1)+' days'}
-function fmtMB(mb){return mb>=1e6?(mb/1e6).toFixed(2)+' TB':mb>=1000?(mb/1000).toFixed(mb>=1e4?0:1)+' GB':mb.toFixed(mb<10?1:0)+' MB'}
+function fmtMB(mb){if(mb<1000&&mb.toFixed(mb<10?1:0)==='1000')mb=1000;return mb>=1e6?(mb/1e6).toFixed(2)+' TB':mb>=1000?(mb/1000).toFixed(mb>=1e4?0:1)+' GB':mb.toFixed(mb<10?1:0)+' MB'}
 function rng(seed){var a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 function svgEl(h){return h}
 
@@ -482,7 +482,7 @@ $('c1').textContent=capGB.toFixed(1)+' GB';
 $('s1s').textContent=(share*100).toFixed(share<.1?1:0)+'%';
 $('b1').style.width=(share*100)+'%';
 var days=genGB/capGB;
-$('t1').textContent=days<=1?'under a day':days.toFixed(days<10?1:0)+' days';
+$('t1').textContent=days<=1.05?(days<.95?'under a day':'about a day'):days.toFixed(days<10?1:0)+' days';
 var bk=Math.max(0,N*(genGB-capGB)/1000);
 $('bk1').textContent=bk.toFixed(bk<10?2:1)+' TB';
 $('v1').textContent=days>1.05?'Each day adds a backlog. Sending one day of data takes about '+days.toFixed(days<10?1:0)+' times as long as collecting it, so the queue only grows.':'At this volume one day of data fits in one day of contact.';
