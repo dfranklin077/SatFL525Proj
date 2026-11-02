@@ -305,7 +305,7 @@ update agreement:                 average cosine similarity between pairs of upd
 <h2>8 What this demo can and cannot tell you</h2>
 <ul class="cap" style="margin:4px 0 0;padding-left:20px">
 <li>A linear model on two features is far simpler than the CNNs used in practice. The class-mix effect shows clearly in update agreement and in per-satellite results, but the final-accuracy gap is often only a few points here. Larger effects (slower, unstable or divergent training) are described in harder settings and are not reproduced here.</li>
-<li>In this toy the non-IID cost shows up mostly as slower progress. With one class per satellite, the gap to the IID re-deal averages about 5 to 6 points after 2 rounds, 3 to 4 after 5 and about 2 after 15 (10 seeds, E = 20, η = 0.5; reproduce it with the 10-draw button and Rounds set to 2, 5 and 15).</li>
+<li>In this toy the non-IID cost shows up mostly as slower progress. With one class per satellite, the gap to the IID re-deal averages about 6 points after 2 rounds, 4 after 5 and 2 to 2.5 after 15 (10 seeds, E = 20, η = 0.5; reproduce it with the 10-draw button and Rounds set to 2, 5 and 15).</li>
 <li>One draw can mislead. If a class barely appears anywhere (small α), no method can learn it, and the pooled run suffers too. The 10-draw button shows how much results move between draws.</li>
 <li>All six satellites take part every round and each one holds the same number of images unless you switch that. Real satellites join unevenly (Module 4) and arrive stale (Module 5).</li>
 <li>Concept shift (same input, different label) is not modelled, and the feature shift is a simple per-satellite offset.</li>
@@ -324,32 +324,61 @@ update agreement:                 average cosine similarity between pairs of upd
 
 <section class="box q" style="margin-top:16px">
 <h2>Check your understanding</h2>
+<p id="qscore" role="status" style="font-size:13px;color:var(--mute);margin:0 0 6px"></p>
 <div class="q2">
-<div>One satellite flies over open ocean and another over farmland, so their class proportions differ. Which kind of non-IID is this?</div>
+<div><b>1.</b> One satellite flies over open ocean and another over farmland, so their class proportions differ. Which kind of non-IID is this?</div>
 <button type="button" data-m="Not quite. Feature skew changes how the inputs look, with the labelling rule shared. Here the proportion of each class differs.">Feature distribution skew</button>
 <button type="button" data-m="Right. P_i(y) differs between clients, as with kangaroos found only in certain regions. (Your toy’s Dirichlet and n-class sliders make exactly this.)">Label distribution skew</button>
 <button type="button" data-m="Not quite. Quantity skew is about how much data each client holds, not what is in it.">Quantity skew</button>
 <p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
 </div>
 <div class="q2" style="margin-top:14px">
-<div>The same land cover looks different in summer and in winter. Which kind is that?</div>
+<div><b>2.</b> The same land cover looks different in summer and in winter. Which kind is that?</div>
 <button type="button" data-m="Right. P_i(x | y) changes while the label’s frequency can stay the same. Seasonal effects and day versus night belong under this heading.">Same label, different features</button>
 <button type="button" data-m="Not quite. The label has not changed meaning; the look of the same label has.">Same features, different label</button>
 <button type="button" data-m="Not quite. Label skew is about how often each class occurs.">Label distribution skew</button>
 <p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
 </div>
 <div class="q2" style="margin-top:14px">
-<div>In section 5, set n = 1. Why is each local-only model perfect on its own data but poor on the global test?</div>
+<div><b>3.</b> In section 5, set n = 1. Why is each local-only model perfect on its own data but poor on the global test?</div>
 <button type="button" data-m="Not quite. The model is the same size. It is the data that is narrow.">The model is too small</button>
 <button type="button" data-m="Right. With one class it can just predict that class, which is trivially accurate locally and wrong for the other three classes. This is the constant-prediction point.">It learns to predict its one class everywhere</button>
 <button type="button" data-m="Not quite. Nothing is lost in transmission; local-only models are never averaged.">Its updates were lost in transmission</button>
 <p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
 </div>
 <div class="q2" style="margin-top:14px">
-<div>What does a small Dirichlet α, such as 0.1, do to the partition?</div>
+<div><b>4.</b> What does a small Dirichlet α, such as 0.1, do to the partition?</div>
 <button type="button" data-m="Right. Small α makes each satellite’s class shares very uneven, so most of its images fall in one or two classes (compare the α = 0.1 square in section 3).">It puts most of each satellite’s images in one or two classes</button>
 <button type="button" data-m="Not quite. That is what a large α does: every satellite’s mix then looks like the whole.">It gives every satellite the same mix of classes</button>
 <button type="button" data-m="Not quite. Image counts are set by the unequal sizes switch, not by α.">It gives some satellites far more images than others</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>5.</b> In the drift picture, each satellite takes many local steps per round. Where does the shared model settle?</div>
+<button type="button" data-m="Not quite. That happens with one local step per round. With many steps each satellite runs to the bottom of its own bowl, and the average of those bottoms is not the ✕.">Exactly on the best single model ✕</button>
+<button type="button" data-m="Right. With many local steps FedAvg settles away from the pooled optimum when the satellites’ objectives differ. At zero disagreement they coincide, as for IID data.">Away from the best single model, because each satellite drifts toward its own optimum</button>
+<button type="button" data-m="Not quite. The path settles after enough rounds. It just settles at the wrong place when the satellites disagree and take many steps.">Nowhere, the path never stops moving</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>6.</b> In this toy, what did FedProx (the μ slider) do?</div>
+<button type="button" data-m="Not quite. Not in this toy. The final accuracy is within about 1 point for most settings, and 1 to 2 points lower at α = 0.3.">It reliably raised the final accuracy on skewed data</button>
+<button type="button" data-m="Not quite. The proximal term keeps each local model near the global one, but it does not make the updates agree.">It made the update agreement perfect</button>
+<button type="button" data-m="Right. After 3 rounds it was about 1 to 4 points lower on skewed data. It helped by 1 to 2 points only with one or two classes per satellite and heavy local training. So it is not a free improvement.">It mostly slowed the early rounds and gave little in the end</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>7.</b> You lower the number of local epochs E to reduce drift. With a Dirichlet label mix, what is the price?</div>
+<button type="button" data-m="Right. Fewer local steps close the gap to the IID re-deal, but each round does less, so a smaller E needs more rounds to catch up.">It needs more rounds: E = 1 ends 1 to 3 points lower than E = 5 after 15 rounds</button>
+<button type="button" data-m="Not quite. With a Dirichlet mix a smaller E ends lower after the same number of rounds. Only with one class per satellite is a smaller E as good or better.">Nothing, a smaller E is always at least as good</button>
+<button type="button" data-m="Not quite. E changes how much each satellite trains per round, not the size of the model.">The model becomes larger and costs more to send</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>8.</b> With one class per satellite, when is the gap between your partition and the IID re-deal biggest?</div>
+<button type="button" data-m="Not quite. The gap shrinks with rounds in this toy: about 6 points after 2 rounds, 4 after 5 and 2 to 2.5 after 15.">After many rounds, once the drift has built up</button>
+<button type="button" data-m="Not quite. It changes a lot: about 6 points after 2 rounds, 4 after 5 and 2 to 2.5 after 15.">It is the same after every round</button>
+<button type="button" data-m="Right. About 6 points after 2 rounds, 4 after 5 and 2 to 2.5 after 15 (10 seeds, E = 20, η = 0.5). In this toy the non-IID cost shows up mostly as slower progress.">In the first few rounds</button>
 <p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
 </div>
 </section>
@@ -492,7 +521,7 @@ function setMode(m){S.mode=m;$('mdir').className=m=='dir'?'p':'';$('mcls').class
 $('mdir').onclick=function(){setMode('dir')};$('mcls').onclick=function(){setMode('cls')};
 ['al','nc','sh','uq','E','lr','R','mu'].forEach(function(i){$(i).oninput=full;$(i).onchange=full});
 $('rs').onclick=function(){S.seed++;full()};$('ten').onclick=ten;
-Array.prototype.forEach.call(document.querySelectorAll('.q2'),function(q){var fb=q.querySelector('.fb');Array.prototype.forEach.call(q.querySelectorAll('button'),function(b){b.onclick=function(){fb.textContent=b.getAttribute('data-m')}})});
+(function(){var qs=document.querySelectorAll('.q2'),tot=qs.length,ans=0,ok=0,sc=document.getElementById('qscore');function upd(){sc.textContent=ans?('Answered '+ans+' of '+tot+' · '+ok+' right on the first try'):('Choose an answer for each of the '+tot+' questions. You get feedback straight away.')}Array.prototype.forEach.call(qs,function(q){var fb=q.querySelector('.fb'),done=false;Array.prototype.forEach.call(q.querySelectorAll('button'),function(b){b.onclick=function(){var m=b.getAttribute('data-m');fb.textContent=m;if(!done){done=true;ans++;if(/^Right/.test(m))ok++;upd()}}})});upd()})();
 /* ---------- new visuals ---------- */
 function T(x,y,s,o){o=o||{};return '<text x="'+x+'" y="'+y+'" font-size="'+(o.s||11)+'" fill="'+(o.c||css('--mute'))+'" text-anchor="'+(o.a||'start')+'"'+(o.b?' font-weight="700"':'')+'>'+s+'</text>'}
 function taxo(){
