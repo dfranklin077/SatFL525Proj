@@ -164,28 +164,109 @@ RAZMI = _src(
     "faster even though each satellite sees the station only briefly.",
 )
 
+SAT_FL_IEEE = _src(
+    "Federated Learning in Satellite Constellations", "IEEE Network, vol. 38, issue 2 (may need a library login)",
+    "https://ieeexplore.ieee.org/abstract/document/10121575",
+    "The published IEEE Network version of the article above, by the same authors.",
+)
+TENG_INTERMITTENT = _src(
+    "Communication-Efficient Satellite-Ground Federated Learning Over Intermittent LEO Satellite Networks",
+    "IEEE Transactions on Mobile Computing, early access (may need a library login)",
+    "https://ieeexplore.ieee.org/abstract/document/11667224",
+    "A federated learning paper for low-Earth-orbit satellite imagery that targets the communication limits "
+    "caused by satellites moving fast and being in contact only intermittently.",
+)
+
 SOURCES_BY_MODULE = {
     "Module 1 · FL basics": [IBM_BLOG, DLAI_COURSE, KAIROUZ, MCMAHAN, SHOKRI, MELIS, ZHU_DLG],
-    "Module 2 · Satellite application": [SAT_FL, RAZMI],
+    "Module 2 · Satellite application": [SAT_FL, SAT_FL_IEEE, RAZMI],
     "Module 3 · IID vs non-IID": [MEDIUM_NONIID, KAIROUZ, ZHAO_NONIID, FEDPROX],
-    "Module 4 · Intermittent contact": [SAT_FL, RAZMI],
+    "Module 4 · Intermittent contact": [SAT_FL, SAT_FL_IEEE, RAZMI, TENG_INTERMITTENT, DLAI_COURSE],
 }
 
-# Reading that goes beyond Modules 1 to 4. Add the sources for the later modules here.
-MORE_RESOURCES = [
-    _src(
-        "Age-Aware and Energy-Constrained Optimization for Routing and Computation Offloading in LEO Satellite Networks",
-        "IEEE Transactions on Mobile Computing (may need a library login)",
-        "https://doi.org/10.1109/TMC.2026.3709610",
-        "A paper on routing data and offloading computation in low-Earth-orbit networks when energy is limited.",
-    ),
-    _src(
-        "OSGS: A Framework for Online Scheduling of Satellite-Ground Collaborative Inference With Space Edge Computing",
-        "IEEE Transactions on Services Computing (may need a library login)",
-        "https://doi.org/10.1109/TSC.2026.3688483",
-        "A paper on scheduling inference work between satellites and the ground using computing on the satellites.",
-    ),
-]
+# Reading that goes beyond Modules 1 to 4, in groups. Add the sources for the later modules here.
+# Each group is a heading and a list of _src(...) entries.
+MORE_RESOURCES = {
+    "Computing in orbit: companies and announcements": [
+        _src(
+            "NVIDIA Launches Space Computing, Rocketing AI Into Orbit", "NVIDIA press release (PDF)",
+            "https://nvidianews.nvidia.com/_gallery/download_pdf/69b862883d633209022fb394/",
+            "NVIDIA's announcement of computing platforms for orbital data centers, satellite imagery analysis and "
+            "spacecraft, with Planet and Starcloud among the partners named.",
+        ),
+        _src(
+            "Nvidia-backed Starcloud trains first AI model in space", "CNBC, December 10, 2025",
+            "https://www.cnbc.com/2025/12/10/nvidia-backed-starcloud-trains-first-ai-model-in-space-orbital-data-centers.html",
+            "A news report on Starcloud's satellite, which carries an NVIDIA GPU, training an AI model in orbit.",
+        ),
+        _src(
+            "Why we should train AI in space", "Starcloud white paper (September 2024, then Lumen Orbit)",
+            "https://starcloudinc.github.io/wp.pdf",
+            "Argues that data centers in orbit could avoid the power limits on Earth by using nearly continuous "
+            "sunlight and radiating heat away into space.",
+        ),
+        _src(
+            "Starcloud-1", "Starcloud",
+            "https://www.starcloud.com/starcloud-1",
+            "The satellite that carried the first NVIDIA H100 GPU into orbit, launched in November 2025.",
+        ),
+        _src(
+            "Starcloud-2", "Starcloud",
+            "https://www.starcloud.com/starcloud-2",
+            "The company's first commercial mission: a small satellite with a GPU cluster and storage for running "
+            "AI in orbit, planned to be operating in a sun-synchronous orbit by 2027.",
+        ),
+        _src(
+            "Starcloud-3", "Starcloud",
+            "https://www.starcloud.com/starcloud-3",
+            "A third-generation satellite for processing data sent directly from devices, described as a step "
+            "toward data centers in space. The page gives no launch date.",
+        ),
+        _src(
+            "Starcloud-4", "Starcloud",
+            "https://www.starcloud.com/starcloud-4",
+            "The fourth step on Starcloud's roadmap. The page points to the white paper and gives no hardware or "
+            "dates.",
+        ),
+        _src(
+            "Planet", "Planet Labs",
+            "https://www.planet.com/",
+            "The company that operates daily Earth-imaging satellites and sells imagery and analytics. Module 2 "
+            "mentions the NVIDIA Jetson computer on its satellites.",
+        ),
+        _src(
+            "At TED, Robbie Schingler explores the promise of planetary intelligence", "Planet, August 2026",
+            "https://www.planet.com/pulse/at-ted-robbie-schingler-explores-the-promise-of-planetary-intelligence/",
+            "A recap of a TED talk on using satellite imagery and AI to track change worldwide, and of Planet's "
+            "beta AI app.",
+        ),
+        _src(
+            "Planet constellations and capabilities", "Planet Labs",
+            "https://www.planet.com/constellations/#capabilities",
+            "Planet's satellite lineup (SuperDove, Pelican, Tanager and others). It says the newest satellites carry "
+            "an NVIDIA Jetson for on-orbit edge computing; the page does not mention federated learning.",
+        ),
+    ],
+    "Research papers": [
+        _src(
+            "Age-Aware and Energy-Constrained Optimization for Routing and Computation Offloading in LEO Satellite Networks",
+            "IEEE Transactions on Mobile Computing (may need a library login)",
+            "https://ieeexplore.ieee.org/abstract/document/11593089",
+            "A paper on routing data and offloading computation in low-Earth-orbit networks when energy is limited.",
+        ),
+        _src(
+            "OSGS: A Framework for Online Scheduling of Satellite-Ground Collaborative Inference With Space Edge Computing",
+            "IEEE Transactions on Services Computing, vol. 19, issue 4 (may need a library login)",
+            "https://ieeexplore.ieee.org/abstract/document/11498484",
+            "A paper on scheduling inference work between satellites and the ground using computing on the satellites.",
+        ),
+        _src(
+            "TechRxiv preprint", "TechRxiv",
+            "https://www.techrxiv.org/doi/10.36227/techrxiv.177222970.07456158/v1",
+            "A preprint posted on TechRxiv.",  # TODO: add the paper's title and one sentence on what it covers
+        ),
+    ],
+}
 
 
 def _source_list(sources: list[dict]) -> None:
@@ -201,9 +282,11 @@ def render_sources() -> None:
         st.markdown(f"#### {name}")
         _source_list(sources)
     st.markdown("#### More resources")
-    st.caption("Reading that goes beyond Modules 1 to 4.")
+    st.caption("Reading that goes beyond Modules 1 to 4: computing in orbit, and further research papers.")
     if MORE_RESOURCES:
-        _source_list(MORE_RESOURCES)
+        for group, sources in MORE_RESOURCES.items():
+            st.markdown(f"##### {group}")
+            _source_list(sources)
     else:
         st.write("More resources will be added here as new modules are released.")
 
