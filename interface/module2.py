@@ -429,32 +429,54 @@ inference time ≈ satellite time ÷ 10</div>
 
 <section class="box q" style="margin-top:16px">
 <h2>Check your understanding</h2>
+<p id="qscore" role="status" style="font-size:13px;color:var(--mute);margin:0 0 6px"></p>
 <div class="q2">
-<div>A satellite has 12 passes a day, each under 6 minutes. About what share of the day can it exchange data?</div>
+<div><b>1.</b> A satellite has 12 passes a day, each under 6 minutes. About what share of the day can it exchange data?</div>
 <button type="button" data-m="Not quite. 12 passes of at most 6 minutes is at most 72 minutes, which is 5% of 1,440 minutes, not a quarter.">About a quarter of the day</button>
 <button type="button" data-m="Right. At most 72 of 1,440 minutes is 5%, and the unavailable share is over 96%, which fits passes averaging under about 4.8 minutes. 4 of 95 minutes gives the same picture.">Roughly 4 to 5%</button>
 <button type="button" data-m="Not quite. That is the share it is out of contact. In contact it is only about 4 to 5%.">About 96%</button>
 <p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
 </div>
 <div class="q2" style="margin-top:14px">
-<div>A 22 MB model is sent at 15 Mbps. Why is this a problem for a 10 s window?</div>
+<div><b>2.</b> A 22 MB model is sent at 15 Mbps. Why is this a problem for a 10 s window?</div>
 <button type="button" data-m="Right. 22 × 8 ÷ 15 is about 11.7 s, longer than the window, so the model cannot be delivered in one stretch and has to wait for a rare long connection or be split.">It takes about 11.7 s, longer than the window</button>
 <button type="button" data-m="Not quite. 22 MB is the model’s size, and the problem is how long it takes to move at 15 Mbps.">22 MB is bigger than the satellite’s memory</button>
 <button type="button" data-m="Not quite. Packet loss makes it worse, but the 11.7 s figure comes from size and rate alone, before any loss.">Packet loss makes every transfer fail</button>
 <p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
 </div>
 <div class="q2" style="margin-top:14px">
-<div>Why does synchronous FedAvg with a single ground station start slowly?</div>
+<div><b>3.</b> Why does synchronous FedAvg with a single ground station start slowly?</div>
 <button type="button" data-m="Not quite. The satellites do not need to share data; the issue is timing.">The satellites cannot share data with each other</button>
 <button type="button" data-m="Right. The server waits for every selected client, so the satellite with the longest gap between contacts decides when the first aggregate exists. In the example that was over nine hours.">It waits for the slowest satellite’s contacts</button>
 <button type="button" data-m="Not quite. Model size matters in other sections, but their example is about contact timing.">The model is too large to aggregate</button>
 <p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
 </div>
 <div class="q2" style="margin-top:14px">
-<div>In federated learning, what travels between the ground and the satellites?</div>
+<div><b>4.</b> In federated learning, what travels between the ground and the satellites?</div>
 <button type="button" data-m="Not quite. That is the download-everything design from section 1. In federated learning the images stay on the satellite.">The raw images, so the ground can train on them</button>
 <button type="button" data-m="Not quite. Each satellite has to send its update back, or the server has nothing to average.">Only the global model; nothing comes back</button>
 <button type="button" data-m="Right. Each satellite trains on its own images and only model updates travel, so the model improves without the images moving.">The model out to the satellites and the updates back</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>5.</b> The global model goes from the ground to the satellite. Using the measured Starlink figures in section 3, how does that direction compare with the other one?</div>
+<button type="button" data-m="Not quite. The direction that carries the global model, ground to satellite (the uplink), is the slower one: 12.43 Mbps against 111.01 Mbps.">It is the faster direction, about 9 times faster</button>
+<button type="button" data-m="Not quite. They are far apart. The measured downlink is 111.01 Mbps and the uplink 12.43 Mbps, a ratio of 8.93.">The two directions run at about the same rate</button>
+<button type="button" data-m="Right. Ground to satellite runs at 12.43 Mbps against 111.01 Mbps the other way (8.93×), and loses 1.24% of packets against 0.24%. The model travels the weaker direction.">It is the slower direction, about 9 times slower, and it also loses more packets</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>6.</b> In Lab 3, scattered loss and bursty loss have the same average loss rate. Why does the lesson say average loss is not enough?</div>
+<button type="button" data-m="Not quite. In the lab the averages are the same. The difference is in how the losses are grouped.">Because bursty loss has a higher average than scattered loss</button>
+<button type="button" data-m="Right. The simple formula gives about 1.3% extra time, but the measured slowdown of one training round with retransmission was 89.6%. The bursty, persistent loss pattern is the main bottleneck.">Because losses that come in bursts hurt much more than the average suggests</button>
+<button type="button" data-m="Not quite. Resending helps only when losses are independent. Bursts, where over 100 packets in a row can be lost, break that assumption.">Because packet loss never matters if each packet is resent once</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>7.</b> A ground GPU needs 100 s per epoch. A satellite has a tenth of the compute (ρ = 0.1). About how long does it take to train E = 5 epochs?</div>
+<button type="button" data-m="Not quite. 500 s is the ground time, E × t_g. The satellite is slower by the factor ρ.">500 s</button>
+<button type="button" data-m="Not quite. That multiplies by ρ instead of dividing. A satellite with a tenth of the compute takes ten times longer, not a tenth of the time.">50 s</button>
+<button type="button" data-m="Right. Satellite time = E × t_g ÷ ρ = 5 × 100 ÷ 0.1 = 5,000 s, about 83 minutes. This is arithmetic from the lesson’s assumption, not a benchmark.">5,000 s</button>
 <p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
 </div>
 </section>
@@ -517,7 +539,7 @@ for(i=0;i<N3;i++){
 }
 $('pk').innerHTML=h;
 $('x3').textContent=(cnt/N3*100).toFixed(2)+'%';$('e3').textContent=ev;$('r3').textContent=best;
-$('v3').textContent=(mode=='r'?'Scattered loss: many separate single-packet gaps, each easy to repair with one resend.':'Bursty loss: far fewer events, but each removes a long stretch. A repair has to wait out the whole outage, and bursts of over 100 packets have been reported.')+' With only 2,000 packets, the actual rate wanders around the setting (press Resample).';
+$('v3').textContent=(mode=='r'?'Scattered loss: many separate single-packet gaps, each easy to repair with one resend.':'Bursty loss: far fewer events, but each removes a long stretch. A repair has to wait out the whole outage, and bursts of over 100 packets have been reported.')+' With only 2,000 packets, the actual rate wanders around the setting (press Resample). At the lowest rates (under about 0.3%) only a handful of packets are lost, so both modes show about one event.';
 $('mr').className=mode=='r'?'p':'';$('mb').className=mode=='b'?'p':'';
 }
 /* ---- Lab 4 ---- */
@@ -693,7 +715,7 @@ $('m4').oninput=gantt;
 ['tg6','e6','q6'].forEach(function(i){$(i).oninput=lab6});
 MODELS.forEach(function(x,i){var b=document.createElement('button');b.type='button';b.textContent=x[0]+' ('+x[1]+' MB)';b.onclick=function(){msel=i;lab4()};$('mbtn').appendChild(b)});
 BITS.forEach(function(x,i){var b=document.createElement('button');b.type='button';b.textContent=x+'-bit';b.onclick=function(){bsel=i;lab4()};$('bbtn').appendChild(b)});
-Array.prototype.forEach.call(document.querySelectorAll('.q2'),function(q){var fb=q.querySelector('.fb');Array.prototype.forEach.call(q.querySelectorAll('button'),function(b){b.onclick=function(){fb.textContent=b.getAttribute('data-m')}})});
+(function(){var qs=document.querySelectorAll('.q2'),tot=qs.length,ans=0,ok=0,sc=document.getElementById('qscore');function upd(){sc.textContent=ans?('Answered '+ans+' of '+tot+' · '+ok+' right on the first try'):('Choose an answer for each of the '+tot+' questions. You get feedback straight away.')}Array.prototype.forEach.call(qs,function(q){var fb=q.querySelector('.fb'),done=false;Array.prototype.forEach.call(q.querySelectorAll('button'),function(b){b.onclick=function(){var m=b.getAttribute('data-m');fb.textContent=m;if(!done){done=true;ans++;if(/^Right/.test(m))ok++;upd()}}})});upd()})();
 all();
 if(window.matchMedia)matchMedia('(prefers-color-scheme:dark)').addEventListener('change',all);
 })();
