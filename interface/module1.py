@@ -68,7 +68,6 @@ table.wrap td:first-child{min-width:110px}
 .loop b{display:block;color:var(--ink);font-size:14px}
 .cap{font-size:13px;color:var(--mute);margin:4px 0 0}
 .q button{display:block;width:100%;text-align:left;margin-top:6px}
-#qa{min-height:44px;margin:10px 0 0;font-size:14px}
 .sec{margin-bottom:16px}
 @media (prefers-reduced-motion:reduce){.pk{display:none}}
 svg text{font-family:inherit}
@@ -431,34 +430,61 @@ D and D′ that differ by one client, and any set S of possible outcomes:
 
 <section class="box q" style="margin-top:16px">
 <h2>Check your understanding</h2>
-<div>One satellite holds twice as many images as another. In FedAvg, how much does its trained model count in the average?</div>
-<button type="button" data-a="0">The same as the other one</button>
-<button type="button" data-a="1">Twice as much, in proportion to its data</button>
-<button type="button" data-a="2">Not at all, only the server’s model counts</button>
-<p id="qa" role="status"></p>
-</section>
-<section class="box q" style="margin-top:16px">
-<h2>More checks</h2>
+<p id="qscore" role="status" style="font-size:13px;color:var(--mute);margin:0 0 6px"></p>
 <div class="q2">
-<div>In differential privacy for FL, what does clipping do?</div>
+<div><b>1.</b> One satellite holds twice as many images as another. In FedAvg, how much does its trained model count in the average?</div>
+<button type="button" data-m="Not quite. FedAvg weights each client by its share of the data, n_k / n, so a larger dataset pulls the average harder. Try the Satellites slider and watch the Share column.">The same as the other one</button>
+<button type="button" data-m="Right. The weight is n_k / n, so twice the images means twice the influence. That is also why one satellite with lots of skewed data can drag the global model, which Module 3 explores.">Twice as much, in proportion to its data</button>
+<button type="button" data-m="Not quite. The server starts with a global model but learns nothing on its own: it only averages what the satellites send back.">Not at all, only the server’s model counts</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>2.</b> In differential privacy for FL, what does clipping do?</div>
 <button type="button" data-m="Not quite. Clipping does not remove anyone from training; it shrinks each client’s update to a maximum size.">It removes clients whose updates look suspicious</button>
 <button type="button" data-m="Right. Capping each update bounds how much any single client can change the result, and that bound is what lets the noise be set to hide any one client.">It caps how much one client’s update can change the result</button>
 <button type="button" data-m="Not quite. That is what sparsification and quantization do (section 8). Clipping is about limiting sensitivity, not size on the wire.">It compresses updates to save bandwidth</button>
 <p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
 </div>
 <div class="q2" style="margin-top:14px">
-<div>A 53 MB model goes to 100 clients, 20% are chosen each round, and an update of the same size comes back. Total traffic after 10 rounds?</div>
+<div><b>3.</b> A 53 MB model goes to 100 clients, 20% are chosen each round, and an update of the same size comes back. Total traffic after 10 rounds?</div>
 <button type="button" data-m="Not quite. 2,120 MB is one round: 53 × 2 × 100 × 0.2. Multiply by the 10 rounds.">2,120 MB</button>
 <button type="button" data-m="Right. 53 × 2 × 100 × 0.2 × 10 = 21,200 MB, about 21 GB.">21,200 MB</button>
 <button type="button" data-m="Not quite. 106,000 MB forgets that only 20% of the clients are chosen each round.">106,000 MB</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>4.</b> The satellites’ data is not alike (not IID). What can go wrong with plain averaging?</div>
+<button type="button" data-m="Not quite. Identifying the sender is not the issue. The problem is what the updates contain.">The server can no longer tell which satellite sent which update</button>
+<button type="button" data-m="Not quite. Averaging does not cancel differences in the data. Each local model moves toward its own data, and the average of those can sit away from what is best for everyone.">Nothing, because averaging always cancels out the differences</button>
+<button type="button" data-m="Right. This is the catch of non-IID data. This module keeps the data IID so the mechanics stay clear, and Module 3 breaks that on purpose.">Local models drift toward their own data, so the average can be worse than pooled training</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>5.</b> In a synchronous round, what sets how long the round takes?</div>
+<button type="button" data-m="Right. The server cannot average until the updates it is waiting for have arrived, so the slowest client sets the pace.">The slowest client the server waits for</button>
+<button type="button" data-m="Not quite. Clients do not copy each other. The server waits for the updates it needs, so a fast client does not shorten the round.">The fastest client, because the others copy its result</button>
+<button type="button" data-m="Not quite. The server holds no training data in this setup. The time depends on the clients and the links.">The size of the server’s own dataset</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>6.</b> With differential privacy, when is the accuracy cost largest?</div>
+<button type="button" data-m="Not quite. The noise added to the average has standard deviation σ × C ÷ m, where m is the number of clients, so more clients means less noise. Try the demo with a different m in mind.">When many clients take part</button>
+<button type="button" data-m="Right. The noise on the average is σ × C ÷ m, so fewer clients (a smaller m) means more noise on the average, and each client’s update is a bigger part of the result.">When few clients take part</button>
+<button type="button" data-m="Not quite. The noise on the average is σ × C ÷ m, so it depends on how many clients are averaged.">It is the same whatever the number of clients</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>7.</b> Everything else stays the same and the fraction of clients chosen each round goes from 20% to 40%. What happens to the total traffic?</div>
+<button type="button" data-m="Not quite. Traffic is (model sent + update returned) × clients × fraction chosen × rounds, so the fraction is a direct multiplier.">It stays the same, because the model size has not changed</button>
+<button type="button" data-m="Not quite. The fraction doubled, from 0.2 to 0.4, so the traffic doubles. It does not grow by 20 percentage points of itself.">It goes up by about 20%</button>
+<button type="button" data-m="Right. Traffic is proportional to the fraction chosen, so 0.4 instead of 0.2 means twice as many transfers per round.">It doubles</button>
 <p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
 </div>
 </section>
 
 
 <script>
-(function(){var q=document.getElementById('qa');var M=['Not quite. FedAvg weights each client by its share of the data, n_k / n, so a larger dataset pulls the average harder. Try the Satellites slider and watch the Share column.','Right. The weight is n_k / n, so twice the images means twice the influence. That is also why one satellite with lots of skewed data can drag the global model, which Module 3 explores.','Not quite. The server starts with a global model but learns nothing on its own: it only averages what the satellites send back.'];
-Array.prototype.forEach.call(document.querySelectorAll('.q button'),function(b){b.onclick=function(){q.textContent=M[+b.getAttribute('data-a')]}})})();
+/* quiz handler is in the main script */
 </script>
 <p class="key" style="margin-top:16px">Next: Module 2, the case against downloading all the satellite data (choose it from the module list at the top of the page)</p>
 </main>
@@ -574,7 +600,7 @@ Array.prototype.forEach.call(document.querySelectorAll('[data-p]'),function(b){b
 ['MS','N8','FR','RD','LY','RT'].forEach(function(id){$(id).oninput=calc});
 
 /* ---------- quiz ---------- */
-Array.prototype.forEach.call(document.querySelectorAll('.q2 button'),function(b){b.onclick=function(){b.parentNode.querySelector('.fb').textContent=b.getAttribute('data-m')}});
+(function(){var qs=document.querySelectorAll('.q2'),tot=qs.length,ans=0,ok=0,sc=document.getElementById('qscore');function upd(){sc.textContent=ans?('Answered '+ans+' of '+tot+' · '+ok+' right on the first try'):('Choose an answer for each of the '+tot+' questions. You get feedback straight away.')}Array.prototype.forEach.call(qs,function(q){var fb=q.querySelector('.fb'),done=false;Array.prototype.forEach.call(q.querySelectorAll('button'),function(b){b.onclick=function(){var m=b.getAttribute('data-m');fb.textContent=m;if(!done){done=true;ans++;if(/^Right/.test(m))ok++;upd()}}})});upd()})();
 
 function drawAll(){draw();draw7()}
 init();drawAll();calc();
