@@ -168,7 +168,7 @@ SOURCES_BY_MODULE = {
     "Module 1 · FL basics": [IBM_BLOG, DLAI_COURSE, KAIROUZ, MCMAHAN, SHOKRI, MELIS, ZHU_DLG],
     "Module 2 · Satellite application": [SAT_FL, RAZMI],
     "Module 3 · IID vs non-IID": [MEDIUM_NONIID, KAIROUZ, ZHAO_NONIID, FEDPROX],
-    "Module 4 · Intermittent contact": [SAT_FL, RAZMI, DLAI_COURSE],
+    "Module 4 · Intermittent contact": [SAT_FL, RAZMI],
 }
 
 # Reading that goes beyond Modules 1 to 4. Add the sources for the later modules here.
