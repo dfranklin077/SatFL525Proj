@@ -41,7 +41,12 @@ _FRAME_SCRIPT = """
       var b = document.body, cs = getComputedStyle(b);
       var h = Math.ceil(b.getBoundingClientRect().height + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom));
       var f = window.frameElement;
-      if (f && h > 0 && Math.abs(f.getBoundingClientRect().height - h) > 2) f.style.height = h + "px";
+      if (!f || h <= 0) return;
+      if (Math.abs(f.getBoundingClientRect().height - h) > 2) f.style.height = h + "px";
+      // Streamlit keeps the frame's wrapper at the height we asked for; make it follow, or the
+      // page footer is drawn on top of the lesson.
+      var c = f.parentElement;
+      if (c && Math.abs(c.getBoundingClientRect().height - h) > 2) c.style.height = h + "px";
     } catch (e) {}
   }
   window.addEventListener("load", fit);
