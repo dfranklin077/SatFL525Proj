@@ -239,25 +239,61 @@ the next round starts where this one ended.</div>
 
 <section class="box q" style="margin-top:16px">
 <h2>Check your understanding</h2>
+<p id="qscore" role="status" style="font-size:13px;color:var(--mute);margin:0 0 6px"></p>
 <div class="q2">
-<div>A satellite’s revisit gap is 24 hours and its training takes 1 hour. About how long does it need to take part in one round, counted from the moment the round starts?</div>
+<div><b>1.</b> A satellite’s revisit gap is 24 hours and its training takes 1 hour. About how long does it need to take part in one round, counted from the moment the round starts?</div>
 <button type="button" data-m="Not quite. The model first has to reach the satellite, which happens at its next contact, and the update can only leave at a contact after training.">About 1 hour</button>
 <button type="button" data-m="Right. The model arrives between 0 and 24 hours after the start, and the update leaves one gap after that, so the total is between 24 and 48 hours.">Between 24 and 48 hours</button>
 <button type="button" data-m="Not quite. It depends on when its first contact falls after the round starts, so it can be anywhere from one gap to two gaps.">Always exactly 24 hours</button>
 <p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
 </div>
 <div class="q2" style="margin-top:14px">
-<div>A server closes every round 12 hours after it starts. A satellite has a 24-hour gap. What happens to it?</div>
+<div><b>2.</b> A server closes every round 12 hours after it starts. A satellite has a 24-hour gap. What happens to it?</div>
 <button type="button" data-m="Not quite. One contact could receive the model, but the update cannot leave until the next one, a full gap later. Two contacts never fit inside 12 hours.">It joins every second round</button>
 <button type="button" data-m="Right. Receiving takes one contact and returning takes the next, at least a gap later, so its update always arrives after the 12-hour round has closed. It is left out of every round.">It is left out of every round</button>
 <button type="button" data-m="Not quite. A contact inside the round is enough to receive the model, but not to return the update, which needs a second one.">It joins whenever one contact falls inside the round</button>
 <p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
 </div>
 <div class="q2" style="margin-top:14px">
-<div>In section 3, when did leaving the rarely seen satellites out of the rounds cost accuracy?</div>
+<div><b>3.</b> In section 3, when did leaving the rarely seen satellites out of the rounds cost accuracy?</div>
 <button type="button" data-m="Not quite. With the switch off, every rule ended near the same accuracy, because every satellite held the same kind of data.">Always</button>
 <button type="button" data-m="Right. When class D lived only on those satellites, the model never saw it. When all satellites held a mix, the others taught the same thing and little was lost.">Only when they held data the others did not</button>
 <button type="button" data-m="Not quite. Round length changes how quickly accuracy arrives, not whether a missing class can be learned.">Only when rounds were long</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>4.</b> With the “wait for all” rule, what decides how long a round lasts?</div>
+<button type="button" data-m="Not quite. The server waits for every update, so one satellite’s gap matters more than the average.">The average gap of all the satellites</button>
+<button type="button" data-m="Not quite. Deadline D belongs to the deadline rule. “Wait for all” has no clock; it ends when the last update arrives.">The deadline D, which the rule sets</button>
+<button type="button" data-m="Right. The round ends when the last update arrives, so a few rarely seen satellites set the pace for everyone.">The slowest satellite: between one and two of its gaps</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>5.</b> With the “first n” rule, which satellites tend to be left out?</div>
+<button type="button" data-m="Right. The same quick satellites win round after round, so the same ones tend to be left out each time. That is how a fast rule becomes a biased one.">The same slow satellites, round after round</button>
+<button type="button" data-m="Not quite. The contact pattern does not change from round to round, so the quickest n are mostly the same ones every time.">A different random set each round</button>
+<button type="button" data-m="Not quite. That is “wait for all.” First n closes at the n-th update and drops the rest.">None, because the server waits until everyone has reported</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>6.</b> With the default 12-hour deadline, you change the training time τ from 0.5 hours to 6 hours. What happens to who is included?</div>
+<button type="button" data-m="Not quite. That needs a much shorter deadline, about 4 to 6 hours, with τ of 2 to 4 hours. At D = 12 hours they still get a contact in time.">The often-seen satellites start to be left out</button>
+<button type="button" data-m="Not quite. The rarely seen satellites are out because of their gap, not their training time, so a different τ does not bring them in.">Every satellite is included, even the rarely seen ones</button>
+<button type="button" data-m="Right. At the default deadline every update that could make it still gets a contact in time. τ matters only when it takes up a large part of the time the round allows.">Nothing changes</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>7.</b> With the switch on and the default sliders (n = 9, 14 days), which rule reached 80% accuracy?</div>
+<button type="button" data-m="Not quite. It ended at about 67 to 68% and never reached 80%, because class D never reached the model.">The deadline rule, because its rounds are short</button>
+<button type="button" data-m="Not quite. It ended at about 67% and also never reached 80%. It drops the same slow satellites.">First n with n = 9, which is the fastest to close</button>
+<button type="button" data-m="Right. It is the only rule that includes the rarely seen satellites that hold class D, so it was the only one to reach 80%, ending near 87%.">Only wait for all, after a median of about 45 hours</button>
+<p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
+</div>
+<div class="q2" style="margin-top:14px">
+<div><b>8.</b> Section 3 draws the accuracy curves against hours instead of rounds. Why?</div>
+<button type="button" data-m="Right. A rule with short rounds finishes many more of them, so comparing at equal rounds would hide the very thing the orbit changes.">Because the clock is what contact windows change, and rounds can differ greatly in length</button>
+<button type="button" data-m="Not quite. They do not. Rounds closed early are much shorter than rounds that wait for the slowest satellite.">Because the rules all finish the same number of rounds</button>
+<button type="button" data-m="Not quite. The reason is not readability. Rounds are not comparable between rules: a round under “wait for all” is much longer.">Because hours are easier to read than rounds</button>
 <p class="fb" role="status" style="min-height:44px;margin:10px 0 0;font-size:14px"></p>
 </div>
 </section>
@@ -387,7 +423,7 @@ Array.prototype.forEach.call(document.querySelectorAll('input[data-k]'),function
 $('tied').onchange=function(){S.tied=this.checked;full()};
 [['pa','all'],['pd','dl'],['pf','first']].forEach(function(b){$(b[0]).onclick=function(){S.pol=b[1];drawTL()}});
 $('ncp').onclick=function(){S.cs++;full()};
-Array.prototype.forEach.call(document.querySelectorAll('.q2'),function(q){var fb=q.querySelector('.fb');Array.prototype.forEach.call(q.querySelectorAll('button'),function(b){b.onclick=function(){fb.textContent=b.getAttribute('data-m')}})});
+(function(){var qs=document.querySelectorAll('.q2'),tot=qs.length,ans=0,ok=0,sc=document.getElementById('qscore');function upd(){sc.textContent=ans?('Answered '+ans+' of '+tot+' · '+ok+' right on the first try'):('Choose an answer for each of the '+tot+' questions. You get feedback straight away.')}Array.prototype.forEach.call(qs,function(q){var fb=q.querySelector('.fb'),done=false;Array.prototype.forEach.call(q.querySelectorAll('button'),function(b){b.onclick=function(){var m=b.getAttribute('data-m');fb.textContent=m;if(!done){done=true;ans++;if(/^Right/.test(m))ok++;upd()}}})});upd()})();
 full();
 if(window.matchMedia)matchMedia('(prefers-color-scheme:dark)').addEventListener&&matchMedia('(prefers-color-scheme:dark)').addEventListener('change',full);
 })();
